@@ -11,13 +11,21 @@ module Secrets
       secret_attributes.map { |attri| attri.gsub('secret_', '') }
     end
 
-    def secretalize
-      # Makes the secrets secret
+    def obscure_secrets
+      secrets.each do |secret|
+        secret_value = self.send :read_attribute, secret
 
+        # Set the secret value to his secret field
+        self.send :write_attribute, "secret_#{secret}", secret_value
+        self.send :write_attribute, secret,  nil
+      end
     end
 
-    def unsecretalize
-      # Makes the secrets not secret anymore
+    def expose_secrets
+      secrets.each do |secret|
+        secret_value = self.send :read_attribute, "secret_#{secret}"
+        self.send :write_attribute, secret, secret_value
+      end
     end
   end
 end
