@@ -1,6 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe WithSecret, :type => :model do
+  describe 'callbacks' do
+    describe 'saving' do
+      subject { described_class.new name: 'John' }
+
+      it 'should obscure secrets after saving' do
+        expect(subject.name).not_to be_blank
+        subject.save!
+        expect(subject.name).to be_blank
+      end
+    end
+
+    describe 'updating' do
+      subject { described_class.create! name: 'John' }
+
+      it 'should obscure secrets after saving' do
+        expect(subject).not_to be_new_record
+        expect(subject.name).to be_blank
+        subject.name = 'Jan'
+        subject.save!
+        expect(subject.name).to be_blank
+      end
+    end
+  end
+
   describe '.secret_attributes' do
     subject { described_class.new.secret_attributes }
 

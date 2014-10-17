@@ -1,6 +1,12 @@
 module Secrets
   module Secret
     # I haz secrets
+    extend ActiveSupport::Concern
+
+    included do
+      before_save :obscure_secrets
+      before_update :obscure_secrets
+    end
 
     def secret_attributes
       # Returns a list with secret attributes
