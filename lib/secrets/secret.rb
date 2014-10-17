@@ -5,7 +5,6 @@ module Secrets
 
     included do
       before_save :obscure_secrets
-      before_update :obscure_secrets
     end
 
     def secret_attributes
