@@ -28,7 +28,7 @@ RSpec.describe Secrets::Secret, :type => :model do
   end
 
   describe '.secret_attributes' do
-    subject { model_with_secrets.new.secret_attributes }
+    subject { model_with_secrets.secret_attributes }
 
     it 'returns the secret attributes' do
       is_expected.to eq ['secret_name']
@@ -36,7 +36,7 @@ RSpec.describe Secrets::Secret, :type => :model do
   end
 
   describe '.secrets' do
-    subject { model_with_secrets.new.secrets }
+    subject { model_with_secrets.secrets }
 
     it 'returns the secrets' do
       is_expected.to eq ['name']
@@ -63,6 +63,14 @@ RSpec.describe Secrets::Secret, :type => :model do
     it 'retrieves the secret value and write it to his original field' do
       subject.expose_secrets
       expect(subject.name).to eq 'John'
+    end
+  end
+
+  describe 'accessing secrets' do
+    subject { model_with_secrets.create! name: 'John' }
+
+    it 'fails when accessing secret directly' do
+      expect { subject.secret_name }.to raise_error NoMethodError
     end
   end
 end
