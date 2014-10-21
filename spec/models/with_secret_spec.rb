@@ -1,9 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe WithSecret, :type => :model do
+RSpec.describe Secrets::Secret, :type => :model do
+  subject(:model_with_secrets) { WithSecret }
+
   describe 'callbacks' do
     describe 'saving' do
-      subject { described_class.new name: 'John' }
+      subject { model_with_secrets.new name: 'John' }
 
       it 'should obscure secrets after saving' do
         expect(subject.name).not_to be_blank
@@ -13,7 +15,7 @@ RSpec.describe WithSecret, :type => :model do
     end
 
     describe 'updating' do
-      subject { described_class.create! name: 'John' }
+      subject { model_with_secrets.create! name: 'John' }
 
       it 'should obscure secrets after saving' do
         expect(subject).not_to be_new_record
@@ -26,7 +28,7 @@ RSpec.describe WithSecret, :type => :model do
   end
 
   describe '.secret_attributes' do
-    subject { described_class.new.secret_attributes }
+    subject { model_with_secrets.new.secret_attributes }
 
     it 'returns the secret attributes' do
       is_expected.to eq ['secret_name']
@@ -34,7 +36,7 @@ RSpec.describe WithSecret, :type => :model do
   end
 
   describe '.secrets' do
-    subject { described_class.new.secrets }
+    subject { model_with_secrets.new.secrets }
 
     it 'returns the secrets' do
       is_expected.to eq ['name']
@@ -42,7 +44,7 @@ RSpec.describe WithSecret, :type => :model do
   end
 
   describe '.obscure_secrets' do
-    subject { described_class.new name: 'John' }
+    subject { model_with_secrets.new name: 'John' }
 
     it 'sets the secret value to blank ' do
       expect(subject.name).to eq 'John'
@@ -52,7 +54,7 @@ RSpec.describe WithSecret, :type => :model do
   end
 
   describe '.expose_secrets' do
-    subject { described_class.new }
+    subject { model_with_secrets.new }
 
     before do
       subject.send :write_attribute, :secret_name, 'John'
@@ -62,9 +64,5 @@ RSpec.describe WithSecret, :type => :model do
       subject.expose_secrets
       expect(subject.name).to eq 'John'
     end
-  end
-
-  it 'responds to unsecretalize' do
-    subject.expose_secrets
   end
 end
